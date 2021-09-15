@@ -49,7 +49,7 @@ if (AWS_POLICY_PERM_BOUNDARY) {
 }
 
 /* Pipeline Stack */
-const pipelineStack = new PipelineStack(app, `${PROJECT_CODE}-pipeline`, {
+const pipelineStack = new PipelineStack(app, `${PROJECT_CODE}`, {
   project_code: PROJECT_CODE,
   code_repo_name: CODE_REPO_NAME,
   lambda_code: lambdaStack.lambdaCode,
