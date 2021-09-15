@@ -97,7 +97,7 @@
       "UpdatePolicy": {
         "CodeDeployLambdaAliasUpdate": {
           "ApplicationName": {
-            "Ref": "DeploymentGroupApplication7B89ABEB"
+            "Ref": "CodeDeployApplicationE587C27C"
           },
           "DeploymentGroupName": {
             "Ref": "DeploymentGroup6D277AF0"
@@ -108,13 +108,14 @@
         "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/LambdaAlias/Resource"
       }
     },
-    "DeploymentGroupApplication7B89ABEB": {
+    "CodeDeployApplicationE587C27C": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
+        "ApplicationName": "lambda-with-cdk-codepipeline",
         "ComputePlatform": "Lambda"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/DeploymentGroup/Application/Resource"
+        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/CodeDeployApplication/Resource"
       }
     },
     "DeploymentGroupServiceRoleA00955F3": {
@@ -170,7 +171,7 @@
       "Type": "AWS::CodeDeploy::DeploymentGroup",
       "Properties": {
         "ApplicationName": {
-          "Ref": "DeploymentGroupApplication7B89ABEB"
+          "Ref": "CodeDeployApplicationE587C27C"
         },
         "ServiceRoleArn": {
           "Fn::GetAtt": [
@@ -197,7 +198,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/12QywoCMQxFv8V9zTiD4FZRdONCRnAf2wjVPoY+FCn9d6czPsBVbs5NbiA11E0Ds8kSH37Kxa1K3DqCdAzIb2x9MQd0qCmQYy15Gx0ntrbGBxd5KP6PXkxvCBmkNZmVuKRQnwVC2kbDCy4zX30i59/sI1dKoi9gEJlJ1JBaq4bwUjPjVpCgTtknpP0Qvxk6TSbsnI0dG+mq65Tk+Ln61/7t5JyZ6YPh6qt7PYd60X/k6qWcumiC1ATtWF+Uu9jdLgEAAA=="
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/12QuwoCMRBFv8U+jq4ItoqijYWsYD8mI0TzWPJQJOTf3ey6KlZz58zlFFNBNZvBdLTEhx9zcZskbh1BOgbkN7a+mAM61BTIsZq8jY4TW1vjg4s8lPuXXkx7EDJIazIruqRQnwVC2kbDCy6dTz6R8282xJWS6AvoQmYSNaTaqk5eZmbcChLUKPuEtO/0q6ZRkuPg/137wqarazJh52xsSukP5ZyZacVw9ZN7NYdq0X7k6qUcu2iC1AR1P19ThNIuLgEAAA=="
       },
       "Metadata": {
         "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/CDKMetadata/Default"

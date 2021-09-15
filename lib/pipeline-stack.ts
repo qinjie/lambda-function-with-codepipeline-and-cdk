@@ -14,13 +14,13 @@ import {
 export interface PipelineStackProps extends cdk.StackProps {
   lambda_code: lambda.CfnParametersCode;
   project_code?: string;
-  lambda_folder: string;
+  src_path: string;
   code_repo_name: string;
   code_repo_branch: string;
   code_repo_owner?: string;
   code_repo_secret_var?: string;
   codepipeline_role_arn: string;
-  artifacts_bucket_name: string;
+  artifact_bucket_name: string;
 }
 
 export class PipelineStack extends cdk.Stack {
@@ -36,7 +36,7 @@ export class PipelineStack extends cdk.Stack {
       this,
       "ArtifactBucket",
       {
-        bucketName: props.artifacts_bucket_name,
+        bucketName: props.artifact_bucket_name,
         encryptionKey: key,
       }
     );
@@ -83,14 +83,10 @@ export class PipelineStack extends cdk.Stack {
     });
 
     /* Build Stage */
-
     const cdkBuild = createCdkBuildProject(this);
     const cdkBuildOutput = new codepipeline.Artifact();
 
-    const lambdaBuild = createPythonLambdaBuildProject(
-      this,
-      props.lambda_folder
-    );
+    const lambdaBuild = createPythonLambdaBuildProject(this, props.src_path);
     const lambdaBuildOuptut = new codepipeline.Artifact();
 
     pipeline.addStage({

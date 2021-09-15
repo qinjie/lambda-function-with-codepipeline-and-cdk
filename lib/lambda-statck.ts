@@ -6,34 +6,43 @@ import { loadEnv } from "../cdk-common/stack-utils";
 
 export interface LambdaStackProps extends cdk.StackProps {
   project_code: string;
-  src_folder: string;
-  handler: string;
-  runtime: lambda.Runtime;
   lambda_name: string;
-  timeout: cdk.Duration;
+  handler?: string;
+  runtime?: lambda.Runtime;
+  timeout?: cdk.Duration;
+  environment?: {
+    [key: string]: string;
+  };
 }
 
 export class LambdaStack extends cdk.Stack {
-  public default_props = {
+  public default_props: LambdaStackProps = {
+    project_code: "",
+    lambda_name: "noname",
     handler: "main.lambda_handler",
     runtime: lambda.Runtime.PYTHON_3_8,
-    lambdaName: "Lambda",
     timeout: cdk.Duration.seconds(30),
+    environment: {},
   };
+
   public lambdaCode: lambda.CfnParametersCode;
 
   constructor(app: cdk.App, id: string, props: LambdaStackProps) {
     super(app, id, props);
 
-    const env = loadEnv(path.join(__dirname, "..", props.src_folder, ".env"));
+    props = {
+      ...this.default_props,
+      ...props,
+    };
 
     this.lambdaCode = lambda.Code.fromCfnParameters();
+
     const func = new lambda.Function(this, props.lambda_name!, {
       code: this.lambdaCode,
-      handler: props!.handler,
-      runtime: props!.runtime,
+      handler: props!.handler!,
+      runtime: props!.runtime!,
       description: `Function for project ${props.project_code}`,
-      environment: env,
+      environment: props.environment,
     });
 
     const alias = new lambda.Alias(this, "LambdaAlias", {
@@ -41,7 +50,16 @@ export class LambdaStack extends cdk.Stack {
       version: func.currentVersion,
     });
 
-    const dg = new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
+    const application = new codedeploy.LambdaApplication(
+      this,
+      "CodeDeployApplication",
+      {
+        applicationName: `${props.project_code}`,
+      }
+    );
+
+    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
+      application,
       alias,
       deploymentConfig:
         codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
