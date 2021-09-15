@@ -8,7 +8,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import {
   createCdkBuildProject,
   createPythonLambdaBuildProject,
-} from "./codebuild-projects";
+} from "../cdk-common/codebuild-projects";
 
 export interface PipelineStackProps extends cdk.StackProps {
   readonly lambdaCode: lambda.CfnParametersCode;
@@ -54,11 +54,21 @@ export class PipelineStack extends cdk.Stack {
         {
           stageName: "Source",
           actions: [
-            new codepipeline_actions.CodeCommitSourceAction({
-              actionName: "CodeCommit_Source",
-              repository: code,
-              branch: "master",
+            // new codepipeline_actions.CodeCommitSourceAction({
+            //   actionName: "CodeCommit_Source",
+            //   repository: code,
+            //   branch: "master",
+            //   output: sourceOutput,
+            // }),
+            new codepipeline_actions.GitHubSourceAction({
+              actionName: "GitHub",
               output: sourceOutput,
+              oauthToken: cdk.SecretValue.secretsManager(
+                process.env.SECRETS_MANAGER_VAR!
+              ),
+              owner: process.env.REPO_OWNER!,
+              repo: process.env.REPO_NAME!,
+              branch: process.env.REPO_BRANCH!,
             }),
           ],
         },
