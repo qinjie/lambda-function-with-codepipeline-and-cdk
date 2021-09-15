@@ -1,6 +1,6 @@
 
 def lambda_handler(event, context):
-    message = 'Good morning!!'
+    message = 'Good Afternoon!!'
     return {
         'message': message
     }
