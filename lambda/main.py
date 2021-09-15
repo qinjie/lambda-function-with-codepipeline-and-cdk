@@ -1,6 +1,6 @@
 
 def lambda_handler(event, context):
-    message = 'Hello {} {}!'.format("World", "Singapore")
+    message = 'Good morning!!'
     return {
         'message': message
     }

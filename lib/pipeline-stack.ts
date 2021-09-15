@@ -59,6 +59,7 @@ export class PipelineStack extends cdk.Stack {
             //   repository: code,
             //   branch: "master",
             //   output: sourceOutput,
+            //   role: undefined,
             // }),
             new codepipeline_actions.GitHubSourceAction({
               actionName: "GitHub",
