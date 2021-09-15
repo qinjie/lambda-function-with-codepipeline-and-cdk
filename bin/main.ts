@@ -43,7 +43,8 @@ const pipelineStack = new PipelineStack(app, "PipelineStack", {
   repoName: CODECOMMIT_REPO_NAME,
   lambdaFolder: LAMBDA_FOLDER,
   pipelineName: "lambda-with-cdk-pipeline",
-  artifactBucketName: "codepipeline-artifacts-qinjie",
+  artifactBucketName:
+    "cdk-codepipelineartifactsbucket-608983964447-ap-southeast-1",
 });
 
 if (process.env.AWS_POLICY_PERM_BOUNDARY) {
