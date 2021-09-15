@@ -38,13 +38,15 @@ This proejct contains 2 stacks, one for pipeline and another one for lambda func
 
 ### By CDK Function
 
-1. Update constants defined in `bin/pipeline.ts` file, e.g. `CODECOMMIT_REPO_NAME`, `LAMBDA_FOLDER`.
+1. Update environment variables defined in `.env` file.
 2. Make sure codecommit project is ready.
 3. Push all source code intot he project.
-4. Deploy the stack for the pipeline.
+4. Find out the list of stacks in the project.
+5. Deploy the stack for the pipeline.
 
 ```
-cdk deploy PipelineDeployingLambdaStack
+cdk list
+cdk deploy <stack_name>
 ```
 
 The stack for lambda function will be deployed automatically when pipeline is created.

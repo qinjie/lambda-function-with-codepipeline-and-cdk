@@ -1,6 +1,7 @@
 import * as cdk from "@aws-cdk/core";
-import * as codebuild from "@aws-cdk/aws-codebuild";
 import * as s3 from "@aws-cdk/aws-s3";
+import * as iam from "@aws-cdk/aws-iam";
+import * as kms from "@aws-cdk/aws-kms";
 import * as codecommit from "@aws-cdk/aws-codecommit";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
@@ -8,105 +9,126 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import {
   createCdkBuildProject,
   createPythonLambdaBuildProject,
-} from "../cdk-common/codebuild-projects";
+} from "../cdk-common/codebuild-utils";
 
 export interface PipelineStackProps extends cdk.StackProps {
-  readonly lambdaCode: lambda.CfnParametersCode;
-  readonly repoName: string;
-  readonly pipelineName?: string;
-  readonly artifactBucketName?: string;
-  readonly lambdaFolder: string;
+  lambda_code: lambda.CfnParametersCode;
+  project_code?: string;
+  lambda_folder: string;
+  code_repo_name: string;
+  code_repo_branch: string;
+  code_repo_owner?: string;
+  code_repo_secret_var?: string;
+  codepipeline_role_arn: string;
+  artifacts_bucket_name: string;
 }
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: PipelineStackProps) {
     super(scope, id, props);
 
-    const code = codecommit.Repository.fromRepositoryName(
+    const key = new kms.Key(this, `${props.project_code}-key`, {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      alias: `${props.project_code}-key`,
+    });
+
+    const artifactBucket = s3.Bucket.fromBucketAttributes(
       this,
-      "CodeRepo",
-      props.repoName
+      "ArtifactBucket",
+      {
+        bucketName: props.artifacts_bucket_name,
+        encryptionKey: key,
+      }
     );
+
+    const pipelineRole = iam.Role.fromRoleArn(
+      this,
+      "CodePipelineRole",
+      props.codepipeline_role_arn
+    );
+
+    const pipeline = new codepipeline.Pipeline(this, "Pipeline", {
+      artifactBucket,
+      role: pipelineRole,
+      pipelineName: props.project_code,
+    });
+
+    /* Source Stage */
     const sourceOutput = new codepipeline.Artifact();
 
+    // const sourceAction = new codepipeline_actions.CodeCommitSourceAction({
+    //   actionName: "CodeCommit_Source",
+    //   repository: codecommit.Repository.fromRepositoryName(
+    //     this,
+    //     "CodeRepo",
+    //     props.code_repo_name
+    //   ),
+    //   branch: props.code_repo_branch,
+    //   output: sourceOutput,
+    //   role: pipelineRole,
+    // });
+
+    const sourceAction = new codepipeline_actions.GitHubSourceAction({
+      actionName: "GitHub_Source",
+      repo: props.code_repo_name,
+      branch: props.code_repo_branch,
+      owner: props.code_repo_owner!,
+      oauthToken: cdk.SecretValue.secretsManager(props.code_repo_secret_var!),
+      output: sourceOutput,
+    });
+
+    pipeline.addStage({
+      stageName: "Source",
+      actions: [sourceAction],
+    });
+
+    /* Build Stage */
+
     const cdkBuild = createCdkBuildProject(this);
-    const cdkBuildOutput = new codepipeline.Artifact("CdkBuildOutput");
+    const cdkBuildOutput = new codepipeline.Artifact();
 
     const lambdaBuild = createPythonLambdaBuildProject(
       this,
-      props.lambdaFolder
+      props.lambda_folder
     );
-    const lambdaBuildOuptut = new codepipeline.Artifact("LambdaBuildOutput");
+    const lambdaBuildOuptut = new codepipeline.Artifact();
 
-    const artifactBucket = props.artifactBucketName
-      ? s3.Bucket.fromBucketName(
-          this,
-          "ArtifactBucket",
-          props.artifactBucketName
-        )
-      : undefined;
+    pipeline.addStage({
+      stageName: "Build",
+      actions: [
+        new codepipeline_actions.CodeBuildAction({
+          actionName: "CDK_Build",
+          project: cdkBuild,
+          input: sourceOutput,
+          outputs: [cdkBuildOutput],
+          role: pipelineRole,
+        }),
+        new codepipeline_actions.CodeBuildAction({
+          actionName: "Lambda_Build",
+          project: lambdaBuild,
+          input: sourceOutput,
+          outputs: [lambdaBuildOuptut],
+          role: pipelineRole,
+        }),
+      ],
+    });
 
-    new codepipeline.Pipeline(this, "Pipeline", {
-      ...(props.artifactBucketName && { artifactBucket }),
-      ...(props.pipelineName && { pipelineName: props.pipelineName }),
-      stages: [
-        // Source
-        {
-          stageName: "Source",
-          actions: [
-            // new codepipeline_actions.CodeCommitSourceAction({
-            //   actionName: "CodeCommit_Source",
-            //   repository: code,
-            //   branch: "master",
-            //   output: sourceOutput,
-            //   role: undefined,
-            // }),
-            new codepipeline_actions.GitHubSourceAction({
-              actionName: "GitHub",
-              output: sourceOutput,
-              oauthToken: cdk.SecretValue.secretsManager(
-                process.env.SECRETS_MANAGER_VAR!
-              ),
-              owner: process.env.REPO_OWNER!,
-              repo: process.env.REPO_NAME!,
-              branch: process.env.REPO_BRANCH!,
-            }),
-          ],
-        },
-        // Build
-        {
-          stageName: "Build",
-          actions: [
-            new codepipeline_actions.CodeBuildAction({
-              actionName: "CDK_Build",
-              project: cdkBuild,
-              input: sourceOutput,
-              outputs: [cdkBuildOutput],
-            }),
-            new codepipeline_actions.CodeBuildAction({
-              actionName: "Lambda_Build",
-              project: lambdaBuild,
-              input: sourceOutput,
-              outputs: [lambdaBuildOuptut],
-            }),
-          ],
-        },
-        // Deploy
-        {
-          stageName: "Deploy",
-          actions: [
-            new codepipeline_actions.CloudFormationCreateUpdateStackAction({
-              actionName: "Lambda_CFN_DEPLOY",
-              templatePath: cdkBuildOutput.atPath("LambdaStack.template.json"),
-              stackName: "LambdaDeploymentStack",
-              adminPermissions: true,
-              parameterOverrides: {
-                ...props.lambdaCode.assign(lambdaBuildOuptut.s3Location),
-              },
-              extraInputs: [lambdaBuildOuptut],
-            }),
-          ],
-        },
+    /* Deploy Stage */
+    pipeline.addStage({
+      stageName: "Deploy",
+      actions: [
+        new codepipeline_actions.CloudFormationCreateUpdateStackAction({
+          actionName: "Deploy",
+          templatePath: cdkBuildOutput.atPath("stack.template.json"),
+          stackName: "LambdaDeploymentStack",
+          adminPermissions: true,
+          parameterOverrides: {
+            // Pass location of lambda code to Lambda Stack
+            ...props.lambda_code.assign(lambdaBuildOuptut.s3Location),
+          },
+          extraInputs: [lambdaBuildOuptut],
+          role: pipelineRole,
+        }),
       ],
     });
   }

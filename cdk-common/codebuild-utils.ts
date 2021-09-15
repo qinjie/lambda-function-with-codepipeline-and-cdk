@@ -2,7 +2,7 @@ import * as codebuild from "@aws-cdk/aws-codebuild";
 import * as cdk from "@aws-cdk/core";
 
 export const createCdkBuildProject = (stack: cdk.Stack) =>
-  new codebuild.PipelineProject(stack, "CdkBuild", {
+  new codebuild.PipelineProject(stack, `${stack.stackName}-CdkBuild`, {
     buildSpec: codebuild.BuildSpec.fromObject({
       version: "0.2",
       phases: {
@@ -15,7 +15,7 @@ export const createCdkBuildProject = (stack: cdk.Stack) =>
       },
       artifacts: {
         "base-directory": "dist",
-        files: ["LambdaStack.template.json"],
+        files: ["*.template.json"],
       },
     }),
     environment: {
@@ -26,9 +26,8 @@ export const createCdkBuildProject = (stack: cdk.Stack) =>
 export const createJavaScriptLambdaBuildProject = (
   stack: cdk.Stack,
   lambdaFolder: string
-) => {
-  // console.log(__dirname);
-  return new codebuild.PipelineProject(stack, "LambdaBuild", {
+) =>
+  new codebuild.PipelineProject(stack, `${stack.stackName}-LambdaBuild`, {
     buildSpec: codebuild.BuildSpec.fromObject({
       version: "0.2",
       phases: {
@@ -48,13 +47,12 @@ export const createJavaScriptLambdaBuildProject = (
       buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
     },
   });
-};
 
 export const createPythonLambdaBuildProject = (
   stack: cdk.Stack,
   lambdaFolder: string
 ) =>
-  new codebuild.PipelineProject(stack, "LambdaBuild", {
+  new codebuild.PipelineProject(stack, `${stack.stackName}-LambdaBuild`, {
     buildSpec: codebuild.BuildSpec.fromObject({
       version: "0.2",
       phases: {

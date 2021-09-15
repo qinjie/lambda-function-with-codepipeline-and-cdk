@@ -1,13 +1,16 @@
 import * as codedeploy from "@aws-cdk/aws-codedeploy";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
+import * as path from "path";
+import { loadEnv } from "../cdk-common/stack-utils";
 
 export interface LambdaStackProps extends cdk.StackProps {
-  readonly handler: string;
-  readonly runtime: lambda.Runtime;
-  readonly lambdaName: string;
-  readonly environment: {};
-  readonly timeout: cdk.Duration;
+  project_code: string;
+  src_folder: string;
+  handler: string;
+  runtime: lambda.Runtime;
+  lambda_name: string;
+  timeout: cdk.Duration;
 }
 
 export class LambdaStack extends cdk.Stack {
@@ -16,36 +19,29 @@ export class LambdaStack extends cdk.Stack {
     runtime: lambda.Runtime.PYTHON_3_8,
     lambdaName: "Lambda",
     timeout: cdk.Duration.seconds(30),
-    environment: {},
   };
-  public readonly lambdaCode: lambda.CfnParametersCode;
+  public lambdaCode: lambda.CfnParametersCode;
 
-  public env_values = {};
-
-  constructor(app: cdk.App, id: string, props?: LambdaStackProps) {
+  constructor(app: cdk.App, id: string, props: LambdaStackProps) {
     super(app, id, props);
 
-    // Set default value for handlerName
-    props = {
-      ...this.default_props,
-      ...props,
-    };
+    const env = loadEnv(path.join(__dirname, "..", props.src_folder, ".env"));
 
     this.lambdaCode = lambda.Code.fromCfnParameters();
-    const func = new lambda.Function(this, props.lambdaName!, {
+    const func = new lambda.Function(this, props.lambda_name!, {
       code: this.lambdaCode,
       handler: props!.handler,
       runtime: props!.runtime,
-      description: `Function generated on: ${new Date().toISOString()}`,
-      environment: props.environment!,
+      description: `Function for project ${props.project_code}`,
+      environment: env,
     });
 
     const alias = new lambda.Alias(this, "LambdaAlias", {
-      aliasName: "Prod",
+      aliasName: "uat",
       version: func.currentVersion,
     });
 
-    new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
+    const dg = new codedeploy.LambdaDeploymentGroup(this, "DeploymentGroup", {
       alias,
       deploymentConfig:
         codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1MINUTE,
