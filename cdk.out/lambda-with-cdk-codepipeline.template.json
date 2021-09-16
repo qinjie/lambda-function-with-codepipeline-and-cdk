@@ -41,17 +41,6 @@
                 "AWS": "arn:aws:iam::608983964447:role/AWSCodePipelineRole"
               },
               "Resource": "*"
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:aws:iam::608983964447:role/AWSCodePipelineRole"
-              },
-              "Resource": "*"
             }
           ],
           "Version": "2012-10-17"
@@ -170,91 +159,12 @@
               }
             },
             {
-              "Action": "iam:PassRole",
+              "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "PipelineDeployRole97597E3E",
+                  "PipelineDeployCodePipelineActionRole8B83082E",
                   "Arn"
-                ]
-              }
-            },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*"
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1/*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey"
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
-                  "Arn"
-                ]
-              }
-            },
-            {
-              "Action": [
-                "cloudformation:CreateStack",
-                "cloudformation:DescribeStack*",
-                "cloudformation:GetStackPolicy",
-                "cloudformation:GetTemplate*",
-                "cloudformation:SetStackPolicy",
-                "cloudformation:UpdateStack",
-                "cloudformation:ValidateTemplate"
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":cloudformation:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":stack/lambda-with-cdk-codepipeline-lambda/*"
-                  ]
                 ]
               }
             }
@@ -371,12 +281,7 @@
                 "Configuration": {
                   "StackName": "lambda-with-cdk-codepipeline-lambda",
                   "Capabilities": "CAPABILITY_NAMED_IAM",
-                  "RoleArn": {
-                    "Fn::GetAtt": [
-                      "PipelineDeployRole97597E3E",
-                      "Arn"
-                    ]
-                  },
+                  "RoleArn": "arn:aws:iam::608983964447:role/cdk-hnb659fds-cfn-exec-role-608983964447-ap-southeast-1",
                   "ParameterOverrides": "{\"lambdawithcdkcodepipelinelambdaLambdaSourceBucketNameParameter06DA47FD\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"BucketName\"]},\"lambdawithcdkcodepipelinelambdaLambdaSourceObjectKeyParameter2803D993\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"ObjectKey\"]}}",
                   "ActionMode": "CREATE_UPDATE",
                   "TemplatePath": "Artifact_Build_CDK_Build::lambda-with-cdk-codepipeline-lambda.template.json"
@@ -390,7 +295,12 @@
                   }
                 ],
                 "Name": "Deploy",
-                "RoleArn": "arn:aws:iam::608983964447:role/AWSCodePipelineRole",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "PipelineDeployCodePipelineActionRole8B83082E",
+                    "Arn"
+                  ]
+                },
                 "RunOrder": 1
               }
             ],
@@ -443,7 +353,7 @@
         "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Source/GitHub_Source/WebhookResource"
       }
     },
-    "PipelineDeployRole97597E3E": {
+    "PipelineDeployCodePipelineActionRole8B83082E": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -452,7 +362,22 @@
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": {
-                "Service": "cloudformation.amazonaws.com"
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":root"
+                    ]
+                  ]
+                }
               }
             }
           ],
@@ -461,14 +386,19 @@
         "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/Role/Resource"
+        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/CodePipelineActionRole/Resource"
       }
     },
-    "PipelineDeployRoleDefaultPolicy90429F22": {
+    "PipelineDeployCodePipelineActionRoleDefaultPolicyEE6D615B": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyDocument": {
           "Statement": [
+            {
+              "Action": "iam:PassRole",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iam::608983964447:role/cdk-hnb659fds-cfn-exec-role-608983964447-ap-southeast-1"
+            },
             {
               "Action": [
                 "s3:GetObject*",
@@ -517,22 +447,49 @@
               }
             },
             {
-              "Action": "*",
+              "Action": [
+                "cloudformation:CreateStack",
+                "cloudformation:DescribeStack*",
+                "cloudformation:GetStackPolicy",
+                "cloudformation:GetTemplate*",
+                "cloudformation:SetStackPolicy",
+                "cloudformation:UpdateStack",
+                "cloudformation:ValidateTemplate"
+              ],
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":cloudformation:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":stack/lambda-with-cdk-codepipeline-lambda/*"
+                  ]
+                ]
+              }
             }
           ],
           "Version": "2012-10-17"
         },
-        "PolicyName": "PipelineDeployRoleDefaultPolicy90429F22",
+        "PolicyName": "PipelineDeployCodePipelineActionRoleDefaultPolicyEE6D615B",
         "Roles": [
           {
-            "Ref": "PipelineDeployRole97597E3E"
+            "Ref": "PipelineDeployCodePipelineActionRole8B83082E"
           }
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/Role/DefaultPolicy/Resource"
+        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/CodePipelineActionRole/DefaultPolicy/Resource"
       }
     },
     "lambdawithcdkcodepipelineCdkBuildRole36ED3381": {

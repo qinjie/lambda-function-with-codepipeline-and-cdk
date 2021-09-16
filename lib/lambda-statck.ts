@@ -6,7 +6,6 @@ import { loadEnv } from "../cdk-common/stack-utils";
 
 export interface LambdaStackProps extends cdk.StackProps {
   project_code: string;
-  lambda_name: string;
   handler?: string;
   runtime?: lambda.Runtime;
   timeout?: cdk.Duration;
@@ -18,7 +17,6 @@ export interface LambdaStackProps extends cdk.StackProps {
 export class LambdaStack extends cdk.Stack {
   public default_props: LambdaStackProps = {
     project_code: "",
-    lambda_name: "noname",
     handler: "main.lambda_handler",
     runtime: lambda.Runtime.PYTHON_3_8,
     timeout: cdk.Duration.seconds(30),
@@ -37,12 +35,13 @@ export class LambdaStack extends cdk.Stack {
 
     this.lambdaCode = lambda.Code.fromCfnParameters();
 
-    const func = new lambda.Function(this, props.lambda_name!, {
+    const func = new lambda.Function(this, `${props.project_code}-lambda`, {
       code: this.lambdaCode,
       handler: props!.handler!,
       runtime: props!.runtime!,
       description: `Function for project ${props.project_code}`,
       environment: props.environment,
+      functionName: `${props.project_code}-lambda`,
     });
 
     const alias = new lambda.Alias(this, "LambdaAlias", {

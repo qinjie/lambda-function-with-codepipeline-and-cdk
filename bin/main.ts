@@ -27,6 +27,7 @@ const code_repo_owner = process.env.CODE_REPO_OWNER!;
 const code_repo_secret_var = process.env.CODE_REPO_SECRET_VAR!;
 const src_path = process.env.SRC_PATH!;
 const codepipeline_role_arn = process.env.AWS_CODEPIPELINE_ROLE_ARN!;
+const cloudformation_role_arn = process.env.AWS_CLOUDFORMATION_ROLE_ARN!;
 const artifact_bucket_name = process.env.AWS_ARTIFACT_BUCKET_NAME!;
 const AWS_POLICY_PERM_BOUNDARY = process.env.AWS_POLICY_PERM_BOUNDARY!;
 
@@ -34,12 +35,10 @@ const app = new cdk.App();
 
 /* Lambda Stack */
 const environment = loadEnv(path.join(__dirname, "..", src_path, ".env"));
-const lambda_name = `${project_code}-lambda`;
-const lambdaStack = new LambdaStack(app, lambda_name, {
+const lambdaStack = new LambdaStack(app, `${project_code}-lambda`, {
   project_code,
   handler: "main.lambda_handler",
   runtime: lambda.Runtime.PYTHON_3_8,
-  lambda_name,
   timeout: cdk.Duration.seconds(30),
   environment,
   tags,
@@ -62,6 +61,7 @@ const pipelineStack = new PipelineStack(app, `${project_code}`, {
   code_repo_owner,
   code_repo_secret_var,
   codepipeline_role_arn,
+  cloudformation_role_arn,
   tags,
 });
 

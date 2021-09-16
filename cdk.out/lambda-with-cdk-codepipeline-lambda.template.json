@@ -59,6 +59,7 @@
             "WHOM": "WORLD"
           }
         },
+        "FunctionName": "lambda-with-cdk-codepipeline-lambda",
         "Handler": "main.lambda_handler",
         "Runtime": "python3.8"
       },
@@ -69,7 +70,7 @@
         "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/lambda-with-cdk-codepipeline-lambda/Resource"
       }
     },
-    "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8386a1df4c672f248c7cce00d384b4244": {
+    "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8808735b7420eda72e9330ee2be77496e": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -88,7 +89,7 @@
         },
         "FunctionVersion": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8386a1df4c672f248c7cce00d384b4244",
+            "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8808735b7420eda72e9330ee2be77496e",
             "Version"
           ]
         },

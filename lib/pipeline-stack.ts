@@ -20,6 +20,7 @@ export interface PipelineStackProps extends cdk.StackProps {
   code_repo_owner?: string;
   code_repo_secret_var?: string;
   codepipeline_role_arn: string;
+  cloudformation_role_arn: string;
   artifact_bucket_name: string;
 }
 
@@ -110,6 +111,12 @@ export class PipelineStack extends cdk.Stack {
     });
 
     /* Deploy Stage */
+    const cloudformationRole = iam.Role.fromRoleArn(
+      this,
+      "CloudformationRole",
+      props.cloudformation_role_arn
+    );
+
     pipeline.addStage({
       stageName: "Deploy",
       actions: [
@@ -125,7 +132,7 @@ export class PipelineStack extends cdk.Stack {
             ...props.lambda_code.assign(lambdaBuildOuptut.s3Location),
           },
           extraInputs: [lambdaBuildOuptut],
-          deploymentRole: pipelineRole,
+          deploymentRole: cloudformationRole,
         }),
       ],
     });
