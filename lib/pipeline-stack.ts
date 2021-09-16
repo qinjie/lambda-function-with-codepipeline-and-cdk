@@ -125,7 +125,7 @@ export class PipelineStack extends cdk.Stack {
             ...props.lambda_code.assign(lambdaBuildOuptut.s3Location),
           },
           extraInputs: [lambdaBuildOuptut],
-          role: pipelineRole,
+          deploymentRole: pipelineRole,
         }),
       ],
     });
