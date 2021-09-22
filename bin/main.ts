@@ -34,10 +34,7 @@ const AWS_POLICY_PERM_BOUNDARY = process.env.AWS_POLICY_PERM_BOUNDARY!;
 const app = new cdk.App();
 
 /* Lambda Stack */
-let environment = loadEnv(path.join(__dirname, "..", src_path, ".env"));
-// Add AWS_ACOUNT_ID to environment variable
-environment = { ...environment, AWS_ACCOUNT_ID: `${cdk.Aws.ACCOUNT_ID}` };
-
+const environment = loadEnv(path.join(__dirname, "..", src_path, ".env"));
 const lambdaStack = new LambdaStack(app, `${project_code}-lambda`, {
   project_code,
   handler: "main.lambda_handler",
