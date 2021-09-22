@@ -1,6 +1,6 @@
 {
   "Resources": {
-    "lambdawithcdkcodepipelinelambdaServiceRole54C0B792": {
+    "copydockerimagetoecrlambdaServiceRole980D1CC6": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -29,67 +29,69 @@
             ]
           }
         ],
-        "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
+        "PermissionsBoundary": "arn:aws:iam::904766938874:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/lambda-with-cdk-codepipeline-lambda/ServiceRole/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/copy-docker-image-to-ecr-lambda/ServiceRole/Resource"
       }
     },
-    "lambdawithcdkcodepipelinelambda45140DC2": {
+    "copydockerimagetoecrlambda575DB5C1": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "lambdawithcdkcodepipelinelambdaLambdaSourceBucketNameParameter06DA47FD"
+            "Ref": "copydockerimagetoecrlambdaLambdaSourceBucketNameParameter2A045169"
           },
           "S3Key": {
-            "Ref": "lambdawithcdkcodepipelinelambdaLambdaSourceObjectKeyParameter2803D993"
+            "Ref": "copydockerimagetoecrlambdaLambdaSourceObjectKeyParameter0E326C99"
           }
         },
         "Role": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinelambdaServiceRole54C0B792",
+            "copydockerimagetoecrlambdaServiceRole980D1CC6",
             "Arn"
           ]
         },
-        "Description": "Function for project lambda-with-cdk-codepipeline",
+        "Description": "Function for project copy-docker-image-to-ecr",
         "Environment": {
           "Variables": {
-            "MESSAGE": "HELLO",
-            "WHOM": "WORLD"
+            "AWS_ACCOUNT_ID": {
+              "Ref": "AWS::AccountId"
+            },
+            "IMAGE_TAGS": "node:12.16.1-alpine3.9,nginx:1.17.8-alpine"
           }
         },
-        "FunctionName": "lambda-with-cdk-codepipeline-lambda",
+        "FunctionName": "copy-docker-image-to-ecr-lambda",
         "Handler": "main.lambda_handler",
         "Runtime": "python3.8"
       },
       "DependsOn": [
-        "lambdawithcdkcodepipelinelambdaServiceRole54C0B792"
+        "copydockerimagetoecrlambdaServiceRole980D1CC6"
       ],
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/lambda-with-cdk-codepipeline-lambda/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/copy-docker-image-to-ecr-lambda/Resource"
       }
     },
-    "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8808735b7420eda72e9330ee2be77496e": {
+    "copydockerimagetoecrlambdaCurrentVersionD62698BBd88aa237af26f344f18baf3fdca642b2": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
-          "Ref": "lambdawithcdkcodepipelinelambda45140DC2"
+          "Ref": "copydockerimagetoecrlambda575DB5C1"
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/lambda-with-cdk-codepipeline-lambda/CurrentVersion/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/copy-docker-image-to-ecr-lambda/CurrentVersion/Resource"
       }
     },
     "LambdaAlias9C15A666": {
       "Type": "AWS::Lambda::Alias",
       "Properties": {
         "FunctionName": {
-          "Ref": "lambdawithcdkcodepipelinelambda45140DC2"
+          "Ref": "copydockerimagetoecrlambda575DB5C1"
         },
         "FunctionVersion": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinelambdaCurrentVersion9748D8B8808735b7420eda72e9330ee2be77496e",
+            "copydockerimagetoecrlambdaCurrentVersionD62698BBd88aa237af26f344f18baf3fdca642b2",
             "Version"
           ]
         },
@@ -106,17 +108,17 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/LambdaAlias/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/LambdaAlias/Resource"
       }
     },
     "CodeDeployApplicationE587C27C": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
-        "ApplicationName": "lambda-with-cdk-codepipeline",
+        "ApplicationName": "copy-docker-image-to-ecr",
         "ComputePlatform": "Lambda"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/CodeDeployApplication/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/CodeDeployApplication/Resource"
       }
     },
     "DeploymentGroupServiceRoleA00955F3": {
@@ -162,10 +164,10 @@
             ]
           }
         ],
-        "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
+        "PermissionsBoundary": "arn:aws:iam::904766938874:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/DeploymentGroup/ServiceRole/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/DeploymentGroup/ServiceRole/Resource"
       }
     },
     "DeploymentGroup6D277AF0": {
@@ -193,7 +195,7 @@
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/DeploymentGroup/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/DeploymentGroup/Resource"
       }
     },
     "CDKMetadata": {
@@ -202,16 +204,16 @@
         "Analytics": "v2:deflate64:H4sIAAAAAAAA/12QuwoCMRBFv8U+jq4ItoqijYWsYD8mI0TzWPJQJOTf3ey6KlZz58zlFFNBNZvBdLTEhx9zcZskbh1BOgbkN7a+mAM61BTIsZq8jY4TW1vjg4s8lPuXXkx7EDJIazIruqRQnwVC2kbDCy6dTz6R8282xJWS6AvoQmYSNaTaqk5eZmbcChLUKPuEtO/0q6ZRkuPg/137wqarazJh52xsSukP5ZyZacVw9ZN7NYdq0X7k6qUcu2iC1AR1P19ThNIuLgEAAA=="
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline-lambda/CDKMetadata/Default"
+        "aws:cdk:path": "copy-docker-image-to-ecr-lambda/CDKMetadata/Default"
       },
       "Condition": "CDKMetadataAvailable"
     }
   },
   "Parameters": {
-    "lambdawithcdkcodepipelinelambdaLambdaSourceBucketNameParameter06DA47FD": {
+    "copydockerimagetoecrlambdaLambdaSourceBucketNameParameter2A045169": {
       "Type": "String"
     },
-    "lambdawithcdkcodepipelinelambdaLambdaSourceObjectKeyParameter2803D993": {
+    "copydockerimagetoecrlambdaLambdaSourceObjectKeyParameter0E326C99": {
       "Type": "String"
     }
   },

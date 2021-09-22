@@ -1,5 +1,5 @@
 {
-  "name": "lambda-python-with-cdk-codepipeline",
+  "name": "copy-docker-image-to-ecr",
   "version": "0.1.0",
   "bin": {
     "pipeline": "bin/main.js"

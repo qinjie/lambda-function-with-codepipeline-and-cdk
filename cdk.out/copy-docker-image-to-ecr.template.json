@@ -1,6 +1,6 @@
 {
   "Resources": {
-    "lambdawithcdkcodepipelinekeyE0188606": {
+    "copydockerimagetoecrkey35013F97": {
       "Type": "AWS::KMS::Key",
       "Properties": {
         "KeyPolicy": {
@@ -38,7 +38,7 @@
               ],
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:aws:iam::608983964447:role/AWSCodePipelineRole"
+                "AWS": "arn:aws:iam::904766938874:role/AWSCodePipelineRole"
               },
               "Resource": "*"
             }
@@ -49,22 +49,22 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-key/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-key/Resource"
       }
     },
-    "lambdawithcdkcodepipelinekeyAlias3A1B6103": {
+    "copydockerimagetoecrkeyAliasE325C11C": {
       "Type": "AWS::KMS::Alias",
       "Properties": {
-        "AliasName": "alias/lambda-with-cdk-codepipeline-key",
+        "AliasName": "alias/copy-docker-image-to-ecr-key",
         "TargetKeyId": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinekeyE0188606",
+            "copydockerimagetoecrkey35013F97",
             "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-key/Alias/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-key/Alias/Resource"
       }
     },
     "CodePipelineRolePolicy31BC10B2": {
@@ -91,7 +91,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1"
                     ]
                   ]
                 },
@@ -103,7 +103,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1/*"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1/*"
                     ]
                   ]
                 }
@@ -120,7 +120,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -128,7 +128,7 @@
             {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Resource": "arn:aws:iam::608983964447:role/AWSCodePipelineRole"
+              "Resource": "arn:aws:iam::904766938874:role/AWSCodePipelineRole"
             },
             {
               "Action": [
@@ -139,7 +139,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelineCdkBuildBFFF2824",
+                  "copydockerimagetoecrCdkBuild2D8E6F09",
                   "Arn"
                 ]
               }
@@ -153,7 +153,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelineLambdaBuild6AF92BA6",
+                  "copydockerimagetoecrLambdaBuildD64B5AE5",
                   "Arn"
                 ]
               }
@@ -177,13 +177,13 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/CodePipelineRole/Policy/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/CodePipelineRole/Policy/Resource"
       }
     },
     "PipelineC660917D": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
-        "RoleArn": "arn:aws:iam::608983964447:role/AWSCodePipelineRole",
+        "RoleArn": "arn:aws:iam::904766938874:role/AWSCodePipelineRole",
         "Stages": [
           {
             "Actions": [
@@ -196,7 +196,7 @@
                 },
                 "Configuration": {
                   "Owner": "qinjie",
-                  "Repo": "lambda-with-cdk-codepipeline",
+                  "Repo": "copy-docker-image-to-ecr",
                   "Branch": "main",
                   "OAuthToken": "{{resolve:secretsmanager:GITHUB_MARKQJ:SecretString:::}}",
                   "PollForSourceChanges": false
@@ -223,7 +223,7 @@
                 },
                 "Configuration": {
                   "ProjectName": {
-                    "Ref": "lambdawithcdkcodepipelineCdkBuildBFFF2824"
+                    "Ref": "copydockerimagetoecrCdkBuild2D8E6F09"
                   }
                 },
                 "InputArtifacts": [
@@ -237,7 +237,7 @@
                     "Name": "Artifact_Build_CDK_Build"
                   }
                 ],
-                "RoleArn": "arn:aws:iam::608983964447:role/AWSCodePipelineRole",
+                "RoleArn": "arn:aws:iam::904766938874:role/AWSCodePipelineRole",
                 "RunOrder": 1
               },
               {
@@ -249,7 +249,7 @@
                 },
                 "Configuration": {
                   "ProjectName": {
-                    "Ref": "lambdawithcdkcodepipelineLambdaBuild6AF92BA6"
+                    "Ref": "copydockerimagetoecrLambdaBuildD64B5AE5"
                   }
                 },
                 "InputArtifacts": [
@@ -263,7 +263,7 @@
                     "Name": "Artifact_Build_Lambda_Build"
                   }
                 ],
-                "RoleArn": "arn:aws:iam::608983964447:role/AWSCodePipelineRole",
+                "RoleArn": "arn:aws:iam::904766938874:role/AWSCodePipelineRole",
                 "RunOrder": 1
               }
             ],
@@ -279,12 +279,12 @@
                   "Version": "1"
                 },
                 "Configuration": {
-                  "StackName": "lambda-with-cdk-codepipeline-lambda",
+                  "StackName": "copy-docker-image-to-ecr-lambda",
                   "Capabilities": "CAPABILITY_NAMED_IAM",
-                  "RoleArn": "arn:aws:iam::608983964447:role/cdk-hnb659fds-cfn-exec-role-608983964447-ap-southeast-1",
-                  "ParameterOverrides": "{\"lambdawithcdkcodepipelinelambdaLambdaSourceBucketNameParameter06DA47FD\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"BucketName\"]},\"lambdawithcdkcodepipelinelambdaLambdaSourceObjectKeyParameter2803D993\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"ObjectKey\"]}}",
+                  "RoleArn": "arn:aws:iam::904766938874:role/cdk-hnb659fds-cfn-exec-role-904766938874-ap-southeast-1",
+                  "ParameterOverrides": "{\"copydockerimagetoecrlambdaLambdaSourceBucketNameParameter2A045169\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"BucketName\"]},\"copydockerimagetoecrlambdaLambdaSourceObjectKeyParameter0E326C99\":{\"Fn::GetArtifactAtt\":[\"Artifact_Build_Lambda_Build\",\"ObjectKey\"]}}",
                   "ActionMode": "CREATE_UPDATE",
-                  "TemplatePath": "Artifact_Build_CDK_Build::lambda-with-cdk-codepipeline-lambda.template.json"
+                  "TemplatePath": "Artifact_Build_CDK_Build::copy-docker-image-to-ecr-lambda.template.json"
                 },
                 "InputArtifacts": [
                   {
@@ -311,22 +311,22 @@
           "EncryptionKey": {
             "Id": {
               "Fn::GetAtt": [
-                "lambdawithcdkcodepipelinekeyE0188606",
+                "copydockerimagetoecrkey35013F97",
                 "Arn"
               ]
             },
             "Type": "KMS"
           },
-          "Location": "cdk-artifactsbucket-608983964447-ap-southeast-1",
+          "Location": "cdk-artifactsbucket-904766938874-ap-southeast-1",
           "Type": "S3"
         },
-        "Name": "lambda-with-cdk-codepipeline"
+        "Name": "copy-docker-image-to-ecr"
       },
       "DependsOn": [
         "CodePipelineRolePolicy31BC10B2"
       ],
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/Pipeline/Resource"
       }
     },
     "PipelineSourceGitHubSourceWebhookResource8EECEFFF": {
@@ -350,7 +350,7 @@
         "RegisterWithThirdParty": true
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Source/GitHub_Source/WebhookResource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/Pipeline/Source/GitHub_Source/WebhookResource"
       }
     },
     "PipelineDeployCodePipelineActionRole8B83082E": {
@@ -383,10 +383,10 @@
           ],
           "Version": "2012-10-17"
         },
-        "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
+        "PermissionsBoundary": "arn:aws:iam::904766938874:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/CodePipelineActionRole/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/Pipeline/Deploy/Deploy/CodePipelineActionRole/Resource"
       }
     },
     "PipelineDeployCodePipelineActionRoleDefaultPolicyEE6D615B": {
@@ -397,7 +397,7 @@
             {
               "Action": "iam:PassRole",
               "Effect": "Allow",
-              "Resource": "arn:aws:iam::608983964447:role/cdk-hnb659fds-cfn-exec-role-608983964447-ap-southeast-1"
+              "Resource": "arn:aws:iam::904766938874:role/cdk-hnb659fds-cfn-exec-role-904766938874-ap-southeast-1"
             },
             {
               "Action": [
@@ -415,7 +415,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1"
                     ]
                   ]
                 },
@@ -427,7 +427,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1/*"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1/*"
                     ]
                   ]
                 }
@@ -441,7 +441,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -473,7 +473,7 @@
                     {
                       "Ref": "AWS::AccountId"
                     },
-                    ":stack/lambda-with-cdk-codepipeline-lambda/*"
+                    ":stack/copy-docker-image-to-ecr-lambda/*"
                   ]
                 ]
               }
@@ -489,10 +489,10 @@
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/Pipeline/Deploy/Deploy/CodePipelineActionRole/DefaultPolicy/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/Pipeline/Deploy/Deploy/CodePipelineActionRole/DefaultPolicy/Resource"
       }
     },
-    "lambdawithcdkcodepipelineCdkBuildRole36ED3381": {
+    "copydockerimagetoecrCdkBuildRole75E26A48": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -507,13 +507,13 @@
           ],
           "Version": "2012-10-17"
         },
-        "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
+        "PermissionsBoundary": "arn:aws:iam::904766938874:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-CdkBuild/Role/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-CdkBuild/Role/Resource"
       }
     },
-    "lambdawithcdkcodepipelineCdkBuildRoleDefaultPolicy1BC3D218": {
+    "copydockerimagetoecrCdkBuildRoleDefaultPolicy5A6904E2": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyDocument": {
@@ -544,7 +544,7 @@
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "lambdawithcdkcodepipelineCdkBuildBFFF2824"
+                        "Ref": "copydockerimagetoecrCdkBuild2D8E6F09"
                       }
                     ]
                   ]
@@ -567,7 +567,7 @@
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "lambdawithcdkcodepipelineCdkBuildBFFF2824"
+                        "Ref": "copydockerimagetoecrCdkBuild2D8E6F09"
                       },
                       ":*"
                     ]
@@ -602,7 +602,7 @@
                     },
                     ":report-group/",
                     {
-                      "Ref": "lambdawithcdkcodepipelineCdkBuildBFFF2824"
+                      "Ref": "copydockerimagetoecrCdkBuild2D8E6F09"
                     },
                     "-*"
                   ]
@@ -628,7 +628,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1"
                     ]
                   ]
                 },
@@ -640,7 +640,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1/*"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1/*"
                     ]
                   ]
                 }
@@ -657,7 +657,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -672,7 +672,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -680,18 +680,18 @@
           ],
           "Version": "2012-10-17"
         },
-        "PolicyName": "lambdawithcdkcodepipelineCdkBuildRoleDefaultPolicy1BC3D218",
+        "PolicyName": "copydockerimagetoecrCdkBuildRoleDefaultPolicy5A6904E2",
         "Roles": [
           {
-            "Ref": "lambdawithcdkcodepipelineCdkBuildRole36ED3381"
+            "Ref": "copydockerimagetoecrCdkBuildRole75E26A48"
           }
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-CdkBuild/Role/DefaultPolicy/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-CdkBuild/Role/DefaultPolicy/Resource"
       }
     },
-    "lambdawithcdkcodepipelineCdkBuildBFFF2824": {
+    "copydockerimagetoecrCdkBuild2D8E6F09": {
       "Type": "AWS::CodeBuild::Project",
       "Properties": {
         "Artifacts": {
@@ -706,7 +706,7 @@
         },
         "ServiceRole": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelineCdkBuildRole36ED3381",
+            "copydockerimagetoecrCdkBuildRole75E26A48",
             "Arn"
           ]
         },
@@ -716,16 +716,16 @@
         },
         "EncryptionKey": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinekeyE0188606",
+            "copydockerimagetoecrkey35013F97",
             "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-CdkBuild/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-CdkBuild/Resource"
       }
     },
-    "lambdawithcdkcodepipelineLambdaBuildRoleC4B63887": {
+    "copydockerimagetoecrLambdaBuildRole7B953ACD": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -740,13 +740,13 @@
           ],
           "Version": "2012-10-17"
         },
-        "PermissionsBoundary": "arn:aws:iam::608983964447:policy/GCCIAccountBoundary"
+        "PermissionsBoundary": "arn:aws:iam::904766938874:policy/GCCIAccountBoundary"
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-LambdaBuild/Role/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-LambdaBuild/Role/Resource"
       }
     },
-    "lambdawithcdkcodepipelineLambdaBuildRoleDefaultPolicy671FE00E": {
+    "copydockerimagetoecrLambdaBuildRoleDefaultPolicyBE9EF53F": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyDocument": {
@@ -777,7 +777,7 @@
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "lambdawithcdkcodepipelineLambdaBuild6AF92BA6"
+                        "Ref": "copydockerimagetoecrLambdaBuildD64B5AE5"
                       }
                     ]
                   ]
@@ -800,7 +800,7 @@
                       },
                       ":log-group:/aws/codebuild/",
                       {
-                        "Ref": "lambdawithcdkcodepipelineLambdaBuild6AF92BA6"
+                        "Ref": "copydockerimagetoecrLambdaBuildD64B5AE5"
                       },
                       ":*"
                     ]
@@ -835,7 +835,7 @@
                     },
                     ":report-group/",
                     {
-                      "Ref": "lambdawithcdkcodepipelineLambdaBuild6AF92BA6"
+                      "Ref": "copydockerimagetoecrLambdaBuildD64B5AE5"
                     },
                     "-*"
                   ]
@@ -861,7 +861,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1"
                     ]
                   ]
                 },
@@ -873,7 +873,7 @@
                       {
                         "Ref": "AWS::Partition"
                       },
-                      ":s3:::cdk-artifactsbucket-608983964447-ap-southeast-1/*"
+                      ":s3:::cdk-artifactsbucket-904766938874-ap-southeast-1/*"
                     ]
                   ]
                 }
@@ -890,7 +890,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -905,7 +905,7 @@
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
-                  "lambdawithcdkcodepipelinekeyE0188606",
+                  "copydockerimagetoecrkey35013F97",
                   "Arn"
                 ]
               }
@@ -913,18 +913,18 @@
           ],
           "Version": "2012-10-17"
         },
-        "PolicyName": "lambdawithcdkcodepipelineLambdaBuildRoleDefaultPolicy671FE00E",
+        "PolicyName": "copydockerimagetoecrLambdaBuildRoleDefaultPolicyBE9EF53F",
         "Roles": [
           {
-            "Ref": "lambdawithcdkcodepipelineLambdaBuildRoleC4B63887"
+            "Ref": "copydockerimagetoecrLambdaBuildRole7B953ACD"
           }
         ]
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-LambdaBuild/Role/DefaultPolicy/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-LambdaBuild/Role/DefaultPolicy/Resource"
       }
     },
-    "lambdawithcdkcodepipelineLambdaBuild6AF92BA6": {
+    "copydockerimagetoecrLambdaBuildD64B5AE5": {
       "Type": "AWS::CodeBuild::Project",
       "Properties": {
         "Artifacts": {
@@ -939,7 +939,7 @@
         },
         "ServiceRole": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelineLambdaBuildRoleC4B63887",
+            "copydockerimagetoecrLambdaBuildRole7B953ACD",
             "Arn"
           ]
         },
@@ -949,13 +949,13 @@
         },
         "EncryptionKey": {
           "Fn::GetAtt": [
-            "lambdawithcdkcodepipelinekeyE0188606",
+            "copydockerimagetoecrkey35013F97",
             "Arn"
           ]
         }
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/lambda-with-cdk-codepipeline-LambdaBuild/Resource"
+        "aws:cdk:path": "copy-docker-image-to-ecr/copy-docker-image-to-ecr-LambdaBuild/Resource"
       }
     },
     "CDKMetadata": {
@@ -964,7 +964,7 @@
         "Analytics": "v2:deflate64:H4sIAAAAAAAA/02QwW7DIAyGn2V36i5dpV239thLlB16psTTHAiuMGyqEO9eSCqtp/9DfMbYHXS7Hby+fOg/2ZjRbrPhgJC/ojZWHdlLDMlENaBwCgbV8ds/czVGisS+qPZCtrNAPuGt3bX4dKSlHRYoSt7gkIzFeNCCivQMuWdHZil40MBu7VOzKMMjXumKjnz9V/+gRX/iM15+mO2qXxK58d/tA09YZ2glK5ZSlK8iTLL97fbQvdcVTEK0CclHmhGGNe/+0F59HwEAAA=="
       },
       "Metadata": {
-        "aws:cdk:path": "lambda-with-cdk-codepipeline/CDKMetadata/Default"
+        "aws:cdk:path": "copy-docker-image-to-ecr/CDKMetadata/Default"
       },
       "Condition": "CDKMetadataAvailable"
     }
